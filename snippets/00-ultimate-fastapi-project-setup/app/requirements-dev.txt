@@ -1,0 +1,11 @@
+# formatting
+ruff
+black
+isort
+
+# testing
+httpx
+pytest
+pytest-asyncio
+pytest-timeout
+requests

@@ -1,0 +1,89 @@
+version: "3.9"
+
+x-postgres-base: &postgres-base
+  image: postgis/postgis:15-3.3-alpine
+  restart: always
+  healthcheck:
+    test:
+      - CMD-SHELL
+      - pg_isready -U postgres
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+x-app-base: &app-base
+  build:
+    context: ./app
+  restart: always
+
+services:
+  postgres-test:
+    profiles: ["test"]
+    <<: *postgres-base
+    env_file: "./app/.env.test"
+    networks:
+      - test
+
+  app-test:
+    profiles: ["test"]
+    <<: *app-base
+    command: sh -c "python -m pytest -s -vv"
+    build:
+      context: ./app
+      args:
+        ENV: test
+    env_file: "./app/.env.test"
+    volumes:
+      - ./app:/app
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - test
+
+  postgres-dev:
+    profiles: ["dev"]
+    <<: *postgres-base
+    env_file: "./app/.env.dev"
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+      - pgdata-dev:/var/lib/postgresql/data
+    networks:
+      - dev
+
+  app-dev:
+    profiles: ["dev"]
+    <<: *app-base
+    command:
+      [
+        "uvicorn",
+        "api.server:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+      ]
+    env_file: "./app/.env.dev"
+    volumes:
+      - ./app:/app
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    networks:
+      - dev
+
+volumes:
+  pgdata-dev:
+
+networks:
+  test:
+  dev:

@@ -16,6 +16,8 @@ async def test_create_user(session: AsyncSession):
     created_user = await create_user(session, user)
     assert created_user.id is not None
     assert created_user.email == user.email
+    assert created_user.created_at is not None
+    assert created_user.updated_at is not None
 
 
 async def test_create_duplicate_user(session: AsyncSession):

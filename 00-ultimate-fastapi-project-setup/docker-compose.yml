@@ -20,7 +20,10 @@ services:
   postgres-test:
     profiles: ["test"]
     <<: *postgres-base
-    env_file: "./app/.env.test"
+    env_file: "./app/.env.local"
+    environment:
+      - POSTGRES_HOST=postgres-test
+      - GUNICORN_WORKERS=1
     networks:
       - test
 
@@ -32,7 +35,10 @@ services:
       context: ./app
       args:
         ENV: test
-    env_file: "./app/.env.test"
+    env_file: "./app/.env.local"
+    environment:
+      - POSTGRES_HOST=postgres-test
+      - GUNICORN_WORKERS=1
     volumes:
       - ./app:/app
     depends_on:
@@ -44,7 +50,10 @@ services:
   postgres-dev:
     profiles: ["dev"]
     <<: *postgres-base
-    env_file: "./app/.env.dev"
+    env_file: "./app/.env.local"
+    environment:
+      - POSTGRES_HOST=postgres-dev
+      - GUNICORN_WORKERS=4
     ports:
       - 5432:5432
     expose:
@@ -68,7 +77,10 @@ services:
         "--port",
         "8000",
       ]
-    env_file: "./app/.env.dev"
+    env_file: "./app/.env.local"
+    environment:
+      - POSTGRES_HOST=postgres-dev
+      - GUNICORN_WORKERS=4
     volumes:
       - ./app:/app
     ports:

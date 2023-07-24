@@ -1,6 +1,6 @@
 # fastapi-snippets
 
-A selection of snippets to make working with FastAPI a dream.
+A selection of snippets to make working with FastAPI a dream ❤️.
 
 The snippets are split into sub-projects, each of which solves a particular problem:
 

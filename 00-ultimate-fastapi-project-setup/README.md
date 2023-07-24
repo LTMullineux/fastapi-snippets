@@ -1,25 +1,3 @@
 # Ultimate FastAPI Project Setup
 
-## Docker and Docker Compose
-
-## Postgres Image
-
-## Scripts
-
-### Testing
-
-### Development
-
-## Application
-
-## Requirements
-
-### Models
-
-### Database Connection
-
-### CRUD
-
-### API Routes
-
-### Core
+See the Medium article [The Ultimate FastAPI Project Setup: FastAPI, Async Postgres, SQLModel, Pytest and Docker]() for more information.

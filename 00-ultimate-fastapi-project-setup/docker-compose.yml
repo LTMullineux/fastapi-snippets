@@ -13,14 +13,14 @@ x-postgres-base: &postgres-base
 
 x-app-base: &app-base
   build:
-    context: ./app
+    context: ./snippets
   restart: always
 
 services:
   postgres-test:
     profiles: ["test"]
     <<: *postgres-base
-    env_file: "./app/.env.local"
+    env_file: "./snippets/.env.local"
     environment:
       - POSTGRES_HOST=postgres-test
       - GUNICORN_WORKERS=1
@@ -32,15 +32,15 @@ services:
     <<: *app-base
     command: sh -c "python -m pytest -s -vv"
     build:
-      context: ./app
+      context: ./snippets
       args:
         ENV: test
-    env_file: "./app/.env.local"
+    env_file: "./snippets/.env.local"
     environment:
       - POSTGRES_HOST=postgres-test
       - GUNICORN_WORKERS=1
     volumes:
-      - ./app:/app
+      - ./snippets:/snippets
     depends_on:
       postgres-test:
         condition: service_healthy
@@ -50,7 +50,7 @@ services:
   postgres-dev:
     profiles: ["dev"]
     <<: *postgres-base
-    env_file: "./app/.env.local"
+    env_file: "./snippets/.env.local"
     environment:
       - POSTGRES_HOST=postgres-dev
       - GUNICORN_WORKERS=4
@@ -77,12 +77,12 @@ services:
         "--port",
         "8000",
       ]
-    env_file: "./app/.env.local"
+    env_file: "./snippets/.env.local"
     environment:
       - POSTGRES_HOST=postgres-dev
       - GUNICORN_WORKERS=4
     volumes:
-      - ./app:/app
+      - ./snippets:/snippets
     ports:
       - 8000:8000
     expose:

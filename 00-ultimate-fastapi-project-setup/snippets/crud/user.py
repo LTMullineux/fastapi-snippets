@@ -1,10 +1,11 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select, delete
-from uuid import UUID
+from sqlmodel import delete, select
 
-from models.user import User, UserCreate, UserUpdate
+from snippets.models.user import User, UserCreate, UserUpdate
 
 
 async def create_user(session: AsyncSession, user: UserCreate) -> User:

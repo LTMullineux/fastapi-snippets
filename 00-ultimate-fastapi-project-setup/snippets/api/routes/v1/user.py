@@ -1,10 +1,12 @@
-from crud.user import create_user, get_user, update_user, delete_user
-from db.session import get_session
-from fastapi import APIRouter, status, Depends
-from models.base import DeleteResponse
-from models.user import UserCreate, UserUpdate, UserResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from snippets.crud.user import create_user, delete_user, get_user, update_user
+from snippets.db.session import get_session
+from snippets.models.base import DeleteResponse
+from snippets.models.user import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter(
     prefix="/users",

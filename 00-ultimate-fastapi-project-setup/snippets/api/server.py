@@ -1,8 +1,9 @@
-from api.routes import router as api_router
-from core.config import settings
-from db.utils import create_db_and_tables
-from db.session import engine
 from fastapi import FastAPI
+
+from snippets.api.routes import router as api_router
+from snippets.core.config import settings
+from snippets.db.session import engine
+from snippets.db.utils import create_db_and_tables
 
 
 def get_application():

@@ -1,7 +1,8 @@
 import pytest_asyncio
-from db.session import get_session
 from fastapi import FastAPI
 from httpx import AsyncClient
+
+from snippets.db.session import get_session
 
 
 class BaseTestRouter:

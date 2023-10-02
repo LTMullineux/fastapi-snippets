@@ -1,14 +1,15 @@
-from uuid_extensions import uuid7
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-from models.user import UserCreate, UserUpdate
-from crud.user import (
+from sqlalchemy.ext.asyncio import AsyncSession
+from uuid_extensions import uuid7
+
+from snippets.crud.user import (
     create_user,
+    delete_user,
     get_user,
     get_user_by_email,
     update_user,
-    delete_user,
 )
+from snippets.models.user import UserCreate, UserUpdate
 
 
 async def test_create_user(session: AsyncSession):

@@ -20,6 +20,6 @@ COPY --from=builder /root/.local /root/.local
 
 ENV PATH=/root/.local/bin:$PATH
 
-WORKDIR /app
+WORKDIR /snippets
 
-COPY . /app
+COPY . /snippets

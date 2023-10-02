@@ -2,10 +2,11 @@ import asyncio
 
 import pytest
 import pytest_asyncio
-from core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
+
+from snippets.core.config import settings
 
 
 @pytest.fixture(scope="session")

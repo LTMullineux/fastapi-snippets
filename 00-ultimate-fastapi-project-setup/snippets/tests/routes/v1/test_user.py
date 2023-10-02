@@ -1,8 +1,9 @@
 import pytest
-from api.routes.v1.user import router as user_router
-from crud.user import create_user, get_user
-from models.user import UserCreate
-from tests.routes.conftest import BaseTestRouter
+
+from snippets.api.routes.v1.user import router as user_router
+from snippets.crud.user import create_user, get_user
+from snippets.models.user import UserCreate
+from snippets.tests.routes.conftest import BaseTestRouter
 
 
 @pytest.mark.asyncio

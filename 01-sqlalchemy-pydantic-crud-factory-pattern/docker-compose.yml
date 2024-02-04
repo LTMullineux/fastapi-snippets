@@ -1,0 +1,46 @@
+version: "3.9"
+
+x-postgres-base: &postgres-base
+  image: postgis/postgis:16-3.4-alpine
+  restart: always
+  healthcheck:
+    test:
+      - CMD-SHELL
+      - pg_isready -U postgres
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+x-app-base: &app-base
+  restart: "no"
+
+services:
+  # test
+  postgres-test:
+    profiles: ["test"]
+    <<: *postgres-base
+    env_file: ".env.test"
+    networks:
+      - test
+
+  snippet-test:
+    profiles: ["test"]
+    <<: *app-base
+    command: ["pytest"]
+    build:
+      context: .
+      args:
+        ENV: test
+    env_file: ".env.test"
+    environment:
+      ENV: test
+    volumes:
+      - ./:/app
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - test
+
+networks:
+  test:

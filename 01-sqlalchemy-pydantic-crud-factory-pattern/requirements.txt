@@ -1,0 +1,6 @@
+SQLAlchemy==2.0.25
+asyncpg==0.29.0
+psycopg2-binary==2.9.9
+pydantic==2.5.3
+pydantic-settings==2.1.0
+uuid6==2024.1.12

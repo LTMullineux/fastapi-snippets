@@ -3,7 +3,7 @@ import pytest
 from snippets.api.routes.v1.user import router as user_router
 from snippets.crud.user import create_user, get_user
 from snippets.models.user import UserCreate
-from snippets.tests.routes.conftest import BaseTestRouter
+from tests.conftest import BaseTestRouter
 
 
 @pytest.mark.asyncio

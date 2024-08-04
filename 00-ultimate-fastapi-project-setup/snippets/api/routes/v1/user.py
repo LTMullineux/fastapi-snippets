@@ -8,10 +8,7 @@ from snippets.db.session import get_session
 from snippets.models.base import DeleteResponse
 from snippets.models.user import UserCreate, UserResponse, UserUpdate
 
-router = APIRouter(
-    prefix="/users",
-    tags=["users"],
-)
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post(

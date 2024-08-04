@@ -1,8 +1,9 @@
-fastapi
-pydantic[email]
-uvicorn[standard]
-sqlmodel
-gunicorn
-asyncpg
-SQLAlchemy
-uuid7
+fastapi==0.112.0
+pydantic[email]==2.8.2
+pydantic-settings==2.4.0
+uvicorn==0.30.5
+sqlmodel==0.0.21
+gunicorn==22.0.0
+asyncpg==0.29.0
+SQLAlchemy==2.0.31
+uuid7==0.1.0

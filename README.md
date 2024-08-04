@@ -8,4 +8,4 @@ The snippets are split into sub-projects, each of which solves a particular prob
 
 - **01-sqlalchemy-pydantic-crud-factory-pattern** implementing the factory and repository pattern in a SQLAlchemy and Pydantic application to simplify everything.
 
-- **03-fastapi-mvt-tileserver** building a dynamic vector tile server with FastAPI, PostGIS and Async SQLAlchemy.
+- **02-fastapi-mvt-tileserver** building a dynamic vector tile server with FastAPI, PostGIS and Async SQLAlchemy.

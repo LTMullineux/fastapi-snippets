@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.ruff.lint.isort]
+known-first-party = ["snippets", "tests"]
+
+[tool.isort]
+known-first-party = ["snippets", "tests"]

@@ -1,11 +1,10 @@
 # formatting
-ruff
-black
+ruff==0.5.6
+black==24.8.0
 isort
 
 # testing
-httpx
-pytest
-pytest-asyncio
-pytest-timeout
-requests
+httpx==0.27.0
+pytest==8.3.2
+pytest-asyncio==0.23.8
+pytest-timeout==2.3.1

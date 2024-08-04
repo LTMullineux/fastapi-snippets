@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ title }}</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.5.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+      #filterContainer {
+        position: absolute;
+        margin: 10px;
+        width: 400px;
+        background-color: white;
+        padding: 10px 20px;
+      }
+      .session {
+        margin-bottom: 20px;
+      }
+      .mapboxgl-popup {
+        max-width: 600px;
+        width: 600px;
+        font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        min-height: 500px;
+        height: 500px;
+        overflow-y: auto;
+      }
+      .listing-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        width: 100%;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .listing-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      .listing-details {
+        padding: 10px;
+      }
+      .listing-name {
+        font-size: 18px;
+        margin: 0;
+      }
+      .listing-type {
+        color: #777;
+        margin: 5px 0;
+      }
+      .listing-rating {
+        display: flex;
+        align-items: center;
+      }
+      .rating {
+        font-size: 16px;
+        color: #f5a623;
+      }
+      .review-count {
+        font-size: 14px;
+        color: #777;
+        margin-left: 5px;
+      }
+      .listing-price {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="filterContainer">
+      <h1>Listing Filters</h1>
+      <h2>Max Price $</h2>
+      <input
+        type="range"
+        id="priceSlider"
+        min="10"
+        max="2000"
+        step="10"
+        value="2000"
+      />
+      <label for="priceSlider"
+        >Nightly Price: <span id="priceValue">$2000</span></label
+      >
+    </div>
+    <script>
+      const host = "{{ host }}";
+      const port = "{{ port }}";
+      const tileEndpoint = `http://${host}:${port}`;
+
+      // function to create the html for an Airbnb style listing card popup
+      const createAirbnbCardPopup = (
+        listing_id,
+        imageUrl,
+        name,
+        propertyType,
+        subPropertyType,
+        beds,
+        rating,
+        reviewCount,
+        price
+      ) => {
+        return `
+          <div class="listing-card">
+            <a href="https://www.airbnb.com/rooms/${listing_id}" target="_blank">
+              <img src="${imageUrl}" alt="${name}" class="listing-image" />
+            </a>
+            <div class="listing-details">
+              <h3 class="listing-name">${name}</h3>
+              <p class="listing-type">${propertyType} - ${subPropertyType}</p>
+              <div class="listing-rating">
+                <span class="rating">${rating}</span>
+                <span class="review-count">(${reviewCount} reviews)</span>
+              </div>
+              <div class="listing-price">$${price} night</div>
+            </div>
+          </div>
+        `;
+      };
+
+      // set the mapbox token and base map
+      mapboxgl.accessToken = "{{ mapbox_access_token }}";
+      var map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        zoom: 8,
+        center: [2.4854125072596753, 39.36600687051655],
+      });
+
+      map.on("load", () => {
+        // add the listing tile source from our FastAPI tile server
+        const listingUrl = `${tileEndpoint}/listings/tiles/{z}/{x}/{y}.mvt`;
+        map.addSource("listingTileSource", {
+          type: "vector",
+          tiles: [listingUrl],
+          minzoom: 8,
+          maxzoom: 24,
+        });
+
+        // add a circle style layer for the listing
+        map.addLayer({
+          id: "listingCircleLayer",
+          type: "circle",
+          source: "listingTileSource",
+          "source-layer": "default",
+          paint: {
+            "circle-color": "#d6e6ff",
+            "circle-opacity": 0.9,
+            "circle-radius": 20,
+            "circle-stroke-color": "#515459",
+          },
+          minzoom: 10,
+          maxzoom: 24,
+        });
+
+        // add a text style layer for the nightly_rate of listing
+        map.addLayer({
+          id: "listingTileLayer",
+          type: "symbol",
+          source: "listingTileSource",
+          "source-layer": "default",
+          layout: {
+            "text-field": ["get", "nightly_price"],
+            "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+            "text-size": 12,
+            "text-offset": [0, -0.5],
+            "text-anchor": "top",
+            "icon-image": ["get", "marker-icon"],
+          },
+          paint: {
+            "text-color": "#000000",
+            "text-halo-color": "#FFFFFF",
+            "text-halo-width": 2,
+          },
+          minzoom: 10,
+          maxzoom: 24,
+        });
+
+        // add a Airbnb style listing card popup
+        map.on("click", "listingCircleLayer", (e) => {
+          map.flyTo({
+            center: e.features[0].geometry.coordinates,
+          });
+          const markerData = e.features[0].properties;
+          const popHtml = createAirbnbCardPopup(
+            markerData.listing_id,
+            markerData.main_image_url,
+            markerData.name,
+            markerData.property_type,
+            markerData.property_sub_type,
+            markerData.beds,
+            markerData.rating,
+            markerData.review_count,
+            markerData.nightly_price
+          );
+          const popup = new mapboxgl.Popup({ offset: 25 })
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(popHtml)
+            .addTo(map);
+        });
+        map.on("mouseenter", "propertyCircleLayer", () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", "propertyCircleLayer", () => {
+          map.getCanvas().style.cursor = "";
+        });
+      });
+
+      map.addControl(new mapboxgl.NavigationControl());
+
+      // here we add an event listener to filter the listings by price dynamically
+      document
+        .getElementById("priceSlider")
+        .addEventListener("input", function (e) {
+          const sliderValue = e.target.value;
+          document.getElementById("priceValue").innerText = sliderValue;
+          filterFeaturesByPrice(sliderValue);
+        });
+
+      function filterFeaturesByPrice(price) {
+        map.setFilter("propertyCircleLayer", [
+          "<",
+          ["get", "nightly_price"],
+          parseInt(price),
+        ]);
+        map.setFilter("propertyTileLayer", [
+          "<",
+          ["get", "nightly_price"],
+          parseInt(price),
+        ]);
+      }
+    </script>
+  </body>
+</html>

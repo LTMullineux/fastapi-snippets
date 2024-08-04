@@ -1,3 +1,10 @@
+.env
+**/.env
+medium.md
+**/medium.md
+xx*
+**/.notes
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
